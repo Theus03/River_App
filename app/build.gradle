@@ -41,4 +41,7 @@ dependencies {
     //  Encrypt Dependencies
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android:1.1.1-12'
+
+    //  LottieFiles Animations
+    implementation "com.airbnb.android:lottie:3.7.0"
 }

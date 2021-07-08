@@ -1,13 +1,242 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:orientation="vertical"
     tools:context=".Activitys.SignUpActivity">
 
-    
+    <!-- Header -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_header_signUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="30dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Img Arrow -->
+        <ImageView
+            android:id="@+id/btn_back_signUp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_arrow_back"
+            android:layout_marginStart="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Body -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <!-- Container -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Container Information -->
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="5dp"
+                android:fillViewport="true"
+                android:scrollbarSize="1dp"
+                android:scrollbarThumbVertical="@drawable/custom_scroll_style_vertical"
+                app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <!-- Container Edits -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Text Create Account Tittle -->
+                    <TextView
+                        android:id="@+id/txt_header_signUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/create_your_account"
+                        android:textColor="@color/black"
+                        android:textSize="27sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- Edit Text Name -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/name_tl_signUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:maxWidth="320dp"
+                        android:minWidth="320dp"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="25"
+                        app:hintEnabled="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/txt_header_signUp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_name_signUp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="@string/name"
+                            android:backgroundTint="@color/base_color"
+                            android:inputType="textPersonName"
+                            android:maxLength="25"
+                            android:minHeight="50dp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Edit Text Email -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/email_tl_signUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:maxWidth="320dp"
+                        android:minWidth="320dp"
+                        app:hintEnabled="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/name_tl_signUp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_email_signUp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/email_address"
+                            android:backgroundTint="@color/base_color"
+                            android:inputType="textEmailAddress|textMultiLine"
+                            android:minHeight="50dp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Edit Text Phone -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/phone_tl_signUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:maxWidth="320dp"
+                        android:minWidth="320dp"
+                        app:hintEnabled="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/email_tl_signUp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_phone_signUp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/phone"
+                            android:backgroundTint="@color/base_color"
+                            android:inputType="phone"
+                            android:minHeight="50dp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Edit Text Born Date -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/bornDate_tl_signUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:maxWidth="320dp"
+                        android:minWidth="320dp"
+                        app:hintEnabled="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/phone_tl_signUp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_bornDate_signUp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:backgroundTint="@color/base_color"
+                            android:hint="@string/date_of_birth"
+                            android:inputType="date"
+                            android:minHeight="50dp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Edit Text Password -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/password_tl_signUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:maxWidth="320dp"
+                        android:minWidth="320dp"
+                        app:hintEnabled="false"
+                        android:backgroundTint="@color/base_color"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/bornDate_tl_signUp"
+                        app:passwordToggleEnabled="true"
+                        app:passwordToggleTint="@color/black">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_password_signUp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/password"
+                            android:backgroundTint="@color/base_color"
+                            android:inputType="textPassword"
+                            android:minHeight="50dp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </ScrollView>
+
+            <!-- Container Bottom -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@color/transparent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <!-- Button Next -->
+                <Button
+                    android:id="@+id/btn_next_signUp"
+                    android:layout_width="100dp"
+                    android:layout_height="35dp"
+                    android:text="@string/next"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:enabled="false"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:background="@drawable/custom_button_disable_next"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

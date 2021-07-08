@@ -4,6 +4,7 @@ import android.util.Patterns;
 
 import org.jetbrains.annotations.NotNull;
 
+
 public abstract class Methods {
 
     public static boolean isValidPhoneNumber(@NotNull String phone) {

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">River</string>
+    <string name="intro_description">Escolha uma forma de iniciar sua navegação agora.</string>
+    <string name="create_account">Criar Conta</string>
+    <string name="have_an_account_already"><font color='#504F4F'>Já possui uma conta?</font> <font color='#10ace0'>Conecte-se</font></string>
+    <string name="create_your_account">Crie sua conta</string>
+    <string name="name">Nome</string>
+    <string name="email_address">Endereço de e-mail</string>
+    <string name="please_enter_a_valid_email">Por favor digite um email válido.</string>
+    <string name="phone">Celular</string>
+    <string name="password">Senha</string>
+    <string name="date_of_birth">Data de nascimento</string>
+    <string name="age_warning">A idade mínima para criar uma conta é 13 anos.</string>
+    <string name="password_cannot_contain_spaces">Senhas não podem conter espaços</string>
+    <string name="password_needs">Sua senha precisa de pelo menos 8 caracteres, 1 letra, 1 número e um caratecter especial.</string>
+    <string name="next">Próximo</string>
+    <string name="please_enter_a_valid_phone_number">Por favor insira um número de telefone válido.</string>
+    <string name="it_is_necessary_last_name">É necessário inserir pelo menos seu sobrenome.</string>
+</resources>
