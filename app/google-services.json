@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "332353881477",
+    "project_id": "river-social",
+    "storage_bucket": "river-social.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332353881477:android:fddf3acecb29d4c354f0ec",
+        "android_client_info": {
+          "package_name": "dev.kaua.river"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "332353881477-nho9gn9cts000rmfnk77fpu1qj5vu0ao.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.kaua.river",
+            "certificate_hash": "2d9d8b8039eda675b0119773710ff2a5ac3c77be"
+          }
+        },
+        {
+          "client_id": "332353881477-te5qaispmfm5uddvullofb646il19uqf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8hHLZci7RiJesmNjIdH04oMVWdX_oYDQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "332353881477-te5qaispmfm5uddvullofb646il19uqf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
