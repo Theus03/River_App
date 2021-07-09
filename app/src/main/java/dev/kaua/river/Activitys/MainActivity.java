@@ -3,15 +3,8 @@ package dev.kaua.river.Activitys;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.telephony.PhoneNumberUtils;
-import android.text.TextUtils;
-import android.util.Patterns;
-import android.widget.Toast;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import dev.kaua.river.EncryptHelper;
+import dev.kaua.river.Security.EncryptHelper;
 import dev.kaua.river.R;
 
 public class MainActivity extends AppCompatActivity {

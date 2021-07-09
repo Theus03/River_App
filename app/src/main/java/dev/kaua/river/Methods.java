@@ -12,6 +12,11 @@ public abstract class Methods {
         return false;
     }
 
+    public static String RemoveSpace(String str){
+        str = str.replaceAll("^ +| +$|( )+", "$1");
+        return str;
+    }
+
 
     // This method can be used in the future
     /*public boolean isValidPhone(String phone) {

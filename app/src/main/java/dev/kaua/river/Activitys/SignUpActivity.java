@@ -7,15 +7,19 @@ import androidx.core.app.ActivityOptionsCompat;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Patterns;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -24,23 +28,41 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import dev.kaua.river.Data.Account.AccountServices;
+import dev.kaua.river.Data.Account.DtoAccount;
+import dev.kaua.river.Security.EncryptHelper;
 import dev.kaua.river.LoadingDialog;
 import dev.kaua.river.Methods;
 import dev.kaua.river.R;
+import dev.kaua.river.Warnings;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SignUpActivity extends AppCompatActivity {
     private ImageView btn_back_signUp;
     private TextInputEditText edit_name, edit_email, edit_phone, edit_bornDate, edit_password;
     private TextInputLayout email_tl_signUp, phone_tl_signUp, bornDate_tl_signUp, password_tl_signUp;
-    private Button btn_next;
+    private Button btn_next, btn_signUp;
     private Timer timer = new Timer();
+    private final Handler timerHandler = new Handler();
     private final long DELAY = 1000; // in ms
     private final Calendar myCalendar = Calendar.getInstance();
     private static DatePickerDialog.OnDateSetListener date;
     private LoadingDialog loadingDialog;
+    private static SignUpActivity instance;
 
+    int age_user = 0;
     String name_user, email, phone;
 
+    final Retrofit retrofitUser = new Retrofit.Builder()
+            .baseUrl("https://dev-river-api.herokuapp.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +70,16 @@ public class SignUpActivity extends AppCompatActivity {
         Ids();
         RunEditTextErrors();
         checking_password_have_minimum_characters();
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null){
+            int error_code = bundle.getInt("error_code");
+            CheckErrorCode(error_code);
+            edit_name.setText(bundle.getString("name_user"));
+            edit_email.setText(bundle.getString("email_user"));
+            edit_phone.setText(bundle.getString("phone_user"));
+            edit_bornDate.setText(bundle.getString("date_birth"));
+            edit_password.setText(bundle.getString("password"));
+        }
 
         //  Creating Calendar
         date = (view, year, month, dayOfMonth) -> {
@@ -74,16 +106,109 @@ public class SignUpActivity extends AppCompatActivity {
                     phone_tl_signUp.setError(getString(R.string.please_enter_a_valid_phone_number));
                 else if(Objects.requireNonNull(edit_bornDate.getText()).toString().length() <= 0)
                     bornDate_tl_signUp.setError(getString(R.string.age_warning));
+                else if(age_user < 13)
+                    bornDate_tl_signUp.setError(getString(R.string.age_warning));
                 else if(!Objects.requireNonNull(edit_password.getText()).toString().matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"))
                     password_tl_signUp.setError(getString(R.string.password_needs));
                 else{
                     loadingDialog.startLoading();
+                    timerHandler.postDelayed(() -> {
+                        Intent i = new Intent(this, TermsAccountActivity.class);
+                        startActivity(i);
+                        loadingDialog.dismissDialog();
+                    }, 300);
                 }
             }catch (Exception ex){
                 edit_name.setError(getString(R.string.it_is_necessary_last_name));
             }
         });
 
+        btn_signUp.setOnClickListener(v -> {
+            loadingDialog = new LoadingDialog(this);
+            loadingDialog.startLoading();
+            Calendar cal = Calendar.getInstance();
+            int day = cal.get(Calendar.DATE);
+            int month = cal.get(Calendar.MONTH) + 1;
+            int year = cal.get(Calendar.YEAR);
+            String joined_date;
+            if(month < 10 && day < 10) joined_date = "0" + day + "/" + "0" + month + "/" + year;
+            else if (day < 10) joined_date = "0" + day + "/" + month + "/" + year;
+            else if (month < 10) joined_date = day + "/" + "0" + month + "/" + year;
+            else joined_date = day + "/" + month + "/" + year;
+
+            DtoAccount account = new DtoAccount();
+            account.setName_user(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_name.getText()).toString())));
+            account.setEmail(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_email.getText()).toString())));
+            account.setPhone_user(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_phone.getText()).toString())));
+            account.setPassword(EncryptHelper.encrypt(edit_password.getText().toString()));
+            account.setBorn_date(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_bornDate.getText()).toString())));
+            account.setJoined_date(EncryptHelper.encrypt(joined_date));
+            account.setBio_user(EncryptHelper.encrypt(getString(R.string.default_bio)));
+
+            AccountServices services = retrofitUser.create(AccountServices.class);
+            Call<DtoAccount> call = services.registerUser(account);
+            call.enqueue(new Callback<DtoAccount>() {
+                @Override
+                public void onResponse(@NotNull Call<DtoAccount> call, @NotNull Response<DtoAccount> response) {
+                    loadingDialog.dismissDialog();
+                    if(response.code() == 201){
+                        Intent i = new Intent(SignUpActivity.this, ValidateEmailActivity.class);
+                        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left, R.anim.move_to_right);
+                        assert response.body() != null;
+                        i.putExtra("account_id", EncryptHelper.decrypt(response.body().getAccount_id_cry()));
+                        i.putExtra("email_user", edit_email.getText().toString());
+                        i.putExtra("password", edit_password.getText().toString());
+                        i.putExtra("type_validate", 0);
+                        ActivityCompat.startActivity(SignUpActivity.this, i, activityOptionsCompat.toBundle());
+                        finish();
+                    }else if(response.code() == 401)
+                        //  Email is already used
+                        ReloadPage(401);
+                    else if(response.code() == 423)
+                        //  Phone is already used
+                        ReloadPage(423);
+                    else if(response.code() == 406)
+                        //  BadWord in user name
+                        ReloadPage(406);
+                    else
+                        Warnings.showWeHaveAProblem(SignUpActivity.this);
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<DtoAccount> call, @NotNull Throwable t) {
+                    loadingDialog.dismissDialog();
+                    Warnings.showWeHaveAProblem(SignUpActivity.this);
+                }
+            });
+        });
+
+    }
+
+    private void CheckErrorCode(int error_code) {
+        switch (error_code){
+            case 406:
+                Warnings.Base_Sheet_Alert(SignUpActivity.this, getString(R.string.bad_username), true);
+                break;
+            case 423:
+                Warnings.Base_Sheet_Alert(SignUpActivity.this, getString(R.string.phone_is_already_used), true);
+                break;
+            case 401:
+                Warnings.Base_Sheet_Alert(SignUpActivity.this, getString(R.string.email_is_already_used), true);
+                break;
+        }
+    }
+
+    private void ReloadPage(int error_code){
+        Intent goTo_SignUp = new Intent(this, SignUpActivity.class);
+        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left, R.anim.move_to_right);
+        goTo_SignUp.putExtra("error_code", error_code);
+        goTo_SignUp.putExtra("name_user", Objects.requireNonNull(edit_name.getText()).toString());
+        goTo_SignUp.putExtra("email_user", Objects.requireNonNull(edit_email.getText()).toString());
+        goTo_SignUp.putExtra("phone_user", Objects.requireNonNull(edit_phone.getText()).toString());
+        goTo_SignUp.putExtra("date_birth", Objects.requireNonNull(edit_bornDate.getText()).toString());
+        goTo_SignUp.putExtra("password", Objects.requireNonNull(edit_password.getText()).toString());
+        ActivityCompat.startActivity(this, goTo_SignUp, activityOptionsCompat.toBundle());
+        finish();
     }
 
     private void RunEditTextErrors() {
@@ -106,9 +231,10 @@ public class SignUpActivity extends AppCompatActivity {
                         public void run() {
                             email = s.toString();
                             runOnUiThread(() -> {
-                                if(!Patterns.EMAIL_ADDRESS.matcher(email).matches())
+                                if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
                                     email_tl_signUp.setError(getString(R.string.please_enter_a_valid_email));
-                                email_tl_signUp.setErrorEnabled(true);
+                                    email_tl_signUp.setErrorEnabled(true);
+                                }
                             });
                         }
                     }, DELAY);
@@ -136,9 +262,10 @@ public class SignUpActivity extends AppCompatActivity {
                         public void run() {
                             phone = s.toString();
                             runOnUiThread(() -> {
-                                if(!Methods.isValidPhoneNumber(phone))
+                                if(!Methods.isValidPhoneNumber(phone)){
                                     phone_tl_signUp.setError(getString(R.string.please_enter_a_valid_phone_number));
-                                phone_tl_signUp.setErrorEnabled(true);
+                                    phone_tl_signUp.setErrorEnabled(true);
+                                }
                             });
                         }
                     }, DELAY);
@@ -158,6 +285,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void Ids() {
+        instance = this;
         loadingDialog = new LoadingDialog(this);
         btn_back_signUp = findViewById(R.id.btn_back_signUp);
         edit_name = findViewById(R.id.edit_name_signUp);
@@ -170,6 +298,8 @@ public class SignUpActivity extends AppCompatActivity {
         edit_password = findViewById(R.id.edit_password_signUp);
         password_tl_signUp = findViewById(R.id.password_tl_signUp);
         btn_next = findViewById(R.id.btn_next_signUp);
+        btn_signUp = findViewById(R.id.btn_signUp_signUp);
+        btn_signUp.setVisibility(View.GONE);
     }
 
     private void ShowCalendar(){
@@ -193,6 +323,8 @@ public class SignUpActivity extends AppCompatActivity {
             bornDate_tl_signUp.setError(getString(R.string.age_warning));
         else
             bornDate_tl_signUp.setErrorEnabled(false);
+
+        age_user = (year - Integer.parseInt(dateSplit[2]));
 
         all_filled();
         edit_bornDate.setText(dateSelected);
@@ -248,6 +380,19 @@ public class SignUpActivity extends AppCompatActivity {
             edit_email.requestFocus();
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
+    public static SignUpActivity getInstance() { return instance; }
+
+    public void EnableSignUpButton(){
+        btn_next.setVisibility(View.GONE);
+        btn_signUp.setVisibility(View.VISIBLE);
+        btn_next.setEnabled(false);
+        edit_name.setEnabled(false);
+        edit_email.setEnabled(false);
+        edit_phone.setEnabled(false);
+        edit_bornDate.setEnabled(false);
+        edit_password.setEnabled(false);
     }
 
     @Override

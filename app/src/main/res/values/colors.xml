@@ -7,9 +7,11 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
+    <color name="hint">#C1171717</color>
     <color name="white">#FFFFFFFF</color>
     <color name="BarColor">#DDDADA</color>
     <color name="base_color">#10ace0</color>
+    <color name="cards_background">#F89B28</color>
     <color name="base_color_disable">#B248C5EF</color>
     <color name="base_color_click">#0F9CCC</color>
 </resources>
