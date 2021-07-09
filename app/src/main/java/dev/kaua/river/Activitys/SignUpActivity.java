@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,7 +44,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SignUpActivity extends AppCompatActivity {
     private ImageView btn_back_signUp;
@@ -56,16 +56,14 @@ public class SignUpActivity extends AppCompatActivity {
     private final Calendar myCalendar = Calendar.getInstance();
     private static DatePickerDialog.OnDateSetListener date;
     private LoadingDialog loadingDialog;
+    @SuppressLint("StaticFieldLeak")
     private static SignUpActivity instance;
 
     int age_user = 0;
     String name_user, email, phone;
     private FirebaseAuth mAuth;
 
-    final Retrofit retrofitUser = new Retrofit.Builder()
-            .baseUrl("https://dev-river-api.herokuapp.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
+    final Retrofit retrofitUser = Methods.GetRetrofitBuilder();
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -94,10 +92,13 @@ public class SignUpActivity extends AppCompatActivity {
             updateLabel();
         };
 
+        //  Select Birth date Click
         edit_bornDate.setOnClickListener(v -> ShowCalendar());
 
+        //  Back button click
         btn_back_signUp.setOnClickListener(v -> Back_to_intro());
 
+        //  Next button click
         btn_next.setOnClickListener(v -> {
             try {
                 String name_user_full = Objects.requireNonNull(edit_name.getText()).toString();
@@ -128,9 +129,12 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+        //  Sign Up button click
         btn_signUp.setOnClickListener(v -> {
             loadingDialog = new LoadingDialog(this);
             loadingDialog.startLoading();
+
+            //  Getting joined date before send user information to API
             Calendar cal = Calendar.getInstance();
             int day = cal.get(Calendar.DATE);
             int month = cal.get(Calendar.MONTH) + 1;
@@ -141,6 +145,7 @@ public class SignUpActivity extends AppCompatActivity {
             else if (month < 10) joined_date = day + "/" + "0" + month + "/" + year;
             else joined_date = day + "/" + month + "/" + year;
 
+            // User information storage on your Dto
             DtoAccount account = new DtoAccount();
             account.setName_user(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_name.getText()).toString())));
             account.setEmail(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_email.getText()).toString().replace(" ", ""))));
@@ -149,6 +154,8 @@ public class SignUpActivity extends AppCompatActivity {
             account.setBorn_date(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_bornDate.getText()).toString())));
             account.setJoined_date(EncryptHelper.encrypt(joined_date));
             account.setBio_user(EncryptHelper.encrypt(getString(R.string.default_bio)));
+
+            // Generate token to user can be logged in firebase services
             String token = Methods.RandomCharacters(45);
             account.setToken(EncryptHelper.encrypt(token));
 
@@ -160,11 +167,11 @@ public class SignUpActivity extends AppCompatActivity {
             mAuth.createUserWithEmailAndPassword(EncryptHelper.decrypt(account.getEmail()), token)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
+
+                            // Sign in success, now go to register user into API
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.w("Auth", "OK" + user);
 
-                            //  Register User at API
                             AccountServices services = retrofitUser.create(AccountServices.class);
                             Call<DtoAccount> call = services.registerUser(account);
                             call.enqueue(new Callback<DtoAccount>() {
@@ -172,6 +179,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 public void onResponse(@NotNull Call<DtoAccount> call, @NotNull Response<DtoAccount> response) {
                                     loadingDialog.dismissDialog();
                                     if(response.code() == 201){
+                                        //  User has been created so now go to the Email Validation
                                         Intent i = new Intent(SignUpActivity.this, ValidateEmailActivity.class);
                                         ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left_go, R.anim.move_to_right_go);
                                         assert response.body() != null;
@@ -203,13 +211,14 @@ public class SignUpActivity extends AppCompatActivity {
                         } else {
                             //  Email is already used
                             ReloadPage(401);
-                            Log.w("Auth", "Error " + task.getException());
+                            Log.d("Auth", "Error " + task.getException());
                         }
                     });
         });
 
     }
 
+    //  Method to check what is the error the register got
     private void CheckErrorCode(int error_code) {
         switch (error_code){
             case 406:
@@ -224,6 +233,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
+    // Method to reload Pag when register get error
     private void ReloadPage(int error_code){
         Intent goTo_SignUp = new Intent(this, SignUpActivity.class);
         ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left_go, R.anim.move_to_right_go);

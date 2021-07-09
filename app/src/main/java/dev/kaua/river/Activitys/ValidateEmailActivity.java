@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import dev.kaua.river.Data.Account.DtoAccount;
 import dev.kaua.river.Data.Validation.ValidationServices;
+import dev.kaua.river.Methods;
 import dev.kaua.river.Security.EncryptHelper;
 import dev.kaua.river.LoadingDialog;
 import dev.kaua.river.R;
@@ -24,7 +25,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ValidateEmailActivity extends AppCompatActivity {
     private TextView txt_who_is_sent;
@@ -35,10 +35,7 @@ public class ValidateEmailActivity extends AppCompatActivity {
 
     private String account_id, password, email_user;
 
-    final Retrofit retrofitUser = new Retrofit.Builder()
-            .baseUrl("https://dev-river-api.herokuapp.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
+    final Retrofit retrofitUser = Methods.GetRetrofitBuilder();
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -101,12 +98,14 @@ public class ValidateEmailActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(@NotNull Call<DtoAccount> call, @NotNull Response<DtoAccount> response) {
                     loadingDialog.dismissDialog();
+                    //  User's email has been successfully confirmed, now login will be performed
                     if(response.code() == 200) Login.DoLogin(ValidateEmailActivity.this, email_user, password);
-                    else if(response.code() == 203)
-                        //  Validation Code is Invalid
-                        Warnings.Base_Sheet_Alert(ValidateEmailActivity.this, getString(R.string.the_validation_code_is_invalid), true);
-                    else
-                        Warnings.showWeHaveAProblem(ValidateEmailActivity.this);
+
+                    //  Validation Code is Invalid
+                    else if(response.code() == 203) Warnings.Base_Sheet_Alert(ValidateEmailActivity.this, getString(R.string.the_validation_code_is_invalid), true);
+
+                    //  API Server had an error
+                    else Warnings.showWeHaveAProblem(ValidateEmailActivity.this);
                 }
 
                 @Override

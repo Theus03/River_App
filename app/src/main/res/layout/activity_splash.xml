@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".Activitys.SplashActivity">
 
+    <!-- Main Animation -->
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/progressBarDialog"
         android:layout_width="150dp"
         android:layout_height="150dp"
         app:lottie_autoPlay="true"

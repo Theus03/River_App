@@ -22,13 +22,13 @@ import dev.kaua.river.Data.Account.AccountServices;
 import dev.kaua.river.Data.Account.DtoAccount;
 import dev.kaua.river.Firebase.ConfFirebase;
 import dev.kaua.river.LoadingDialog;
+import dev.kaua.river.Methods;
 import dev.kaua.river.R;
 import dev.kaua.river.Warnings;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -41,10 +41,7 @@ public abstract class Login {
     private static SharedPreferences mPrefs;
     private static final String PREFS_NAME = "myPrefs";
 
-    static final Retrofit retrofitUser = new Retrofit.Builder()
-            .baseUrl("https://dev-river-api.herokuapp.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
+    static final Retrofit retrofitUser = Methods.GetRetrofitBuilder();
 
     public static void DoLogin(Context context, String login_method, String password){
         loadingDialog = new LoadingDialog((Activity) context);
@@ -57,8 +54,11 @@ public abstract class Login {
             public void onResponse(@NotNull Call<DtoAccount> call, @NotNull Response<DtoAccount> response) {
                 loadingDialog.dismissDialog();
                 if(response.code() == 200){
+                    //  Clear all prefs before login user
                     mPrefs = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                     mPrefs.edit().clear().apply();
+
+                    //  Add User prefs
                     SharedPreferences.Editor editor = mPrefs.edit();
                     assert response.body() != null;
                     editor.putString("pref_account_id", response.body().getAccount_id_cry());
