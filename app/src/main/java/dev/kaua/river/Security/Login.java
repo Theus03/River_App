@@ -5,19 +5,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.widget.Toast;
+import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.jetbrains.annotations.NotNull;
 
 import dev.kaua.river.Activitys.MainActivity;
 import dev.kaua.river.Activitys.SignInActivity;
-import dev.kaua.river.Activitys.SignUpActivity;
 import dev.kaua.river.Activitys.ValidateEmailActivity;
 import dev.kaua.river.Data.Account.AccountServices;
 import dev.kaua.river.Data.Account.DtoAccount;
+import dev.kaua.river.Firebase.ConfFirebase;
 import dev.kaua.river.LoadingDialog;
 import dev.kaua.river.R;
 import dev.kaua.river.Warnings;
@@ -32,6 +35,7 @@ import static android.content.Context.MODE_PRIVATE;
 public abstract class Login {
     @SuppressLint("StaticFieldLeak")
     private static LoadingDialog loadingDialog;
+    private static FirebaseAuth mAuth;
 
     //  Set preferences
     private static SharedPreferences mPrefs;
@@ -70,14 +74,27 @@ public abstract class Login {
                     editor.putString("pref_followers", response.body().getFollowers());
                     editor.putString("pref_born_date", response.body().getBorn_date());
                     editor.putString("pref_joined_date", response.body().getJoined_date());
+                    editor.putString("pref_token", response.body().getToken());
                     editor.apply();
+
+                    //  Log in User On Firebase
+                    mAuth = ConfFirebase.getFirebaseAuth();
+                    FirebaseUser currentUser = mAuth.getCurrentUser();
+                    if(currentUser != null) mAuth.signOut();
+
+                    mAuth.signInWithEmailAndPassword(EncryptHelper.decrypt(response.body().getEmail()), EncryptHelper.decrypt(response.body().getToken()))
+                            .addOnCompleteListener(task -> Log.d("Auth", "Login Ok"));
+
+                    //  Go To main
                     Intent i = new Intent(context, MainActivity.class);
-                    ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(context, R.anim.move_to_left, R.anim.move_to_right);
+                    ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(context, R.anim.move_to_left_go, R.anim.move_to_right_go);
                     ActivityCompat.startActivity(context, i, activityOptionsCompat.toBundle());
                     ((Activity) context).finish();
                 }else if(response.code() == 206){
+                    mPrefs = context.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                    mPrefs.edit().clear().apply();
                     Intent i = new Intent(context, ValidateEmailActivity.class);
-                    ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(context,R.anim.move_to_left, R.anim.move_to_right);
+                    ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(context,R.anim.move_to_left_go, R.anim.move_to_right_go);
                     //noinspection ConstantConditions
                     i.putExtra("account_id", EncryptHelper.decrypt(response.body().getMessage()));
                     i.putExtra("email_user", login_method);
@@ -86,6 +103,8 @@ public abstract class Login {
                     ActivityCompat.startActivity(context, i, activityOptionsCompat.toBundle());
                     ((Activity) context).finish();
                 }else if(response.code() == 401) {
+                    mPrefs = context.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                    mPrefs.edit().clear().apply();
                     try {
                         SignInActivity.getInstance().Invalid_email_or_password();
                     }catch (Exception ex){

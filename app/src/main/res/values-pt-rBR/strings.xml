@@ -45,4 +45,5 @@
     <string name="login_to_river">Entrar no River.</string>
     <string name="forgot_your_password">Esqueceu sua senha?</string>
     <string name="login_or_password_invalid">Login ou senha inválidos.</string>
+    <string name="river_corporation">River Corporation</string>
 </resources>

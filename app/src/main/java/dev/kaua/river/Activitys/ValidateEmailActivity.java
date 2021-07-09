@@ -68,7 +68,7 @@ public class ValidateEmailActivity extends AppCompatActivity {
 
 
         //  Set Didn't receive email click
-        txt_didNot_receive_email_validate.setOnClickListener(v -> Warnings.DidNot_receive_email(this, getString(R.string.resend_code_desc), getString(R.string.resend_code), 0));
+        txt_didNot_receive_email_validate.setOnClickListener(v -> Warnings.DidNot_receive_email(this, getString(R.string.resend_code_desc), getString(R.string.resend_code), account_id,0));
 
         //  Set Edit Code TextWatcher
         edit_verification_code.addTextChangedListener(new TextWatcher() {

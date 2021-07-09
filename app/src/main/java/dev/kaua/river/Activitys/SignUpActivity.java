@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,6 +19,8 @@ import android.widget.ImageView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,6 +33,7 @@ import java.util.TimerTask;
 
 import dev.kaua.river.Data.Account.AccountServices;
 import dev.kaua.river.Data.Account.DtoAccount;
+import dev.kaua.river.Firebase.ConfFirebase;
 import dev.kaua.river.Security.EncryptHelper;
 import dev.kaua.river.LoadingDialog;
 import dev.kaua.river.Methods;
@@ -56,6 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     int age_user = 0;
     String name_user, email, phone;
+    private FirebaseAuth mAuth;
 
     final Retrofit retrofitUser = new Retrofit.Builder()
             .baseUrl("https://dev-river-api.herokuapp.com/")
@@ -138,48 +143,69 @@ public class SignUpActivity extends AppCompatActivity {
 
             DtoAccount account = new DtoAccount();
             account.setName_user(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_name.getText()).toString())));
-            account.setEmail(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_email.getText()).toString())));
+            account.setEmail(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_email.getText()).toString().replace(" ", ""))));
             account.setPhone_user(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_phone.getText()).toString())));
             account.setPassword(EncryptHelper.encrypt(edit_password.getText().toString()));
             account.setBorn_date(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_bornDate.getText()).toString())));
             account.setJoined_date(EncryptHelper.encrypt(joined_date));
             account.setBio_user(EncryptHelper.encrypt(getString(R.string.default_bio)));
+            String token = Methods.RandomCharacters(45);
+            account.setToken(EncryptHelper.encrypt(token));
 
-            AccountServices services = retrofitUser.create(AccountServices.class);
-            Call<DtoAccount> call = services.registerUser(account);
-            call.enqueue(new Callback<DtoAccount>() {
-                @Override
-                public void onResponse(@NotNull Call<DtoAccount> call, @NotNull Response<DtoAccount> response) {
-                    loadingDialog.dismissDialog();
-                    if(response.code() == 201){
-                        Intent i = new Intent(SignUpActivity.this, ValidateEmailActivity.class);
-                        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left, R.anim.move_to_right);
-                        assert response.body() != null;
-                        i.putExtra("account_id", EncryptHelper.decrypt(response.body().getAccount_id_cry()));
-                        i.putExtra("email_user", edit_email.getText().toString());
-                        i.putExtra("password", edit_password.getText().toString());
-                        i.putExtra("type_validate", 0);
-                        ActivityCompat.startActivity(SignUpActivity.this, i, activityOptionsCompat.toBundle());
-                        finish();
-                    }else if(response.code() == 401)
-                        //  Email is already used
-                        ReloadPage(401);
-                    else if(response.code() == 423)
-                        //  Phone is already used
-                        ReloadPage(423);
-                    else if(response.code() == 406)
-                        //  BadWord in user name
-                        ReloadPage(406);
-                    else
-                        Warnings.showWeHaveAProblem(SignUpActivity.this);
-                }
+            //  Register User in Firebase
+            mAuth = ConfFirebase.getFirebaseAuth();
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if(currentUser != null) mAuth.signOut();
 
-                @Override
-                public void onFailure(@NotNull Call<DtoAccount> call, @NotNull Throwable t) {
-                    loadingDialog.dismissDialog();
-                    Warnings.showWeHaveAProblem(SignUpActivity.this);
-                }
-            });
+            mAuth.createUserWithEmailAndPassword(EncryptHelper.decrypt(account.getEmail()), token)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Log.w("Auth", "OK" + user);
+
+                            //  Register User at API
+                            AccountServices services = retrofitUser.create(AccountServices.class);
+                            Call<DtoAccount> call = services.registerUser(account);
+                            call.enqueue(new Callback<DtoAccount>() {
+                                @Override
+                                public void onResponse(@NotNull Call<DtoAccount> call, @NotNull Response<DtoAccount> response) {
+                                    loadingDialog.dismissDialog();
+                                    if(response.code() == 201){
+                                        Intent i = new Intent(SignUpActivity.this, ValidateEmailActivity.class);
+                                        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left_go, R.anim.move_to_right_go);
+                                        assert response.body() != null;
+                                        i.putExtra("account_id", EncryptHelper.decrypt(response.body().getAccount_id_cry()));
+                                        i.putExtra("email_user", edit_email.getText().toString());
+                                        i.putExtra("password", edit_password.getText().toString());
+                                        i.putExtra("type_validate", 0);
+                                        ActivityCompat.startActivity(SignUpActivity.this, i, activityOptionsCompat.toBundle());
+                                        finish();
+                                    }else if(response.code() == 401)
+                                        //  Email is already used
+                                        ReloadPage(401);
+                                    else if(response.code() == 423)
+                                        //  Phone is already used
+                                        ReloadPage(423);
+                                    else if(response.code() == 406)
+                                        //  BadWord in user name
+                                        ReloadPage(406);
+                                    else
+                                        Warnings.showWeHaveAProblem(SignUpActivity.this);
+                                }
+
+                                @Override
+                                public void onFailure(@NotNull Call<DtoAccount> call, @NotNull Throwable t) {
+                                    loadingDialog.dismissDialog();
+                                    Warnings.showWeHaveAProblem(SignUpActivity.this);
+                                }
+                            });
+                        } else {
+                            //  Email is already used
+                            ReloadPage(401);
+                            Log.w("Auth", "Error " + task.getException());
+                        }
+                    });
         });
 
     }
@@ -200,7 +226,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void ReloadPage(int error_code){
         Intent goTo_SignUp = new Intent(this, SignUpActivity.class);
-        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left, R.anim.move_to_right);
+        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left_go, R.anim.move_to_right_go);
         goTo_SignUp.putExtra("error_code", error_code);
         goTo_SignUp.putExtra("name_user", Objects.requireNonNull(edit_name.getText()).toString());
         goTo_SignUp.putExtra("email_user", Objects.requireNonNull(edit_email.getText()).toString());
@@ -402,7 +428,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void Back_to_intro() {
         Intent goTo_intro = new Intent(this, IntroActivity.class);
-        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(), R.anim.move_to_right, R.anim.move_to_right);
+        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(), R.anim.move_to_right_back, R.anim.move_to_right_go);
         ActivityCompat.startActivity(this, goTo_intro, activityOptionsCompat.toBundle());
         finish();
     }

@@ -17,12 +17,26 @@ import androidx.core.app.ActivityOptionsCompat;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-import dev.kaua.river.Activitys.IntroActivity;
+import org.jetbrains.annotations.NotNull;
+
 import dev.kaua.river.Activitys.SignInActivity;
+import dev.kaua.river.Data.Account.DtoAccount;
+import dev.kaua.river.Data.Validation.ValidationServices;
+import dev.kaua.river.Security.EncryptHelper;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Warnings {
     private static BottomSheetDialog bottomSheetDialog;
     private static Dialog WarningError;
+    private static LoadingDialog loadingDialog;
+    static final Retrofit retrofitUser = new Retrofit.Builder()
+            .baseUrl("https://dev-river-api.herokuapp.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
 
     //  Create Show To Base Message
     public static void Base_Sheet_Alert(Activity context, String msg, boolean cancelable) {
@@ -47,7 +61,7 @@ public class Warnings {
     }
 
     //  Create Show To did not receive email
-    public static void DidNot_receive_email(Activity context, String msg_main, String msg, int case_type) {
+    public static void DidNot_receive_email(Activity context, String msg_main, String msg, String account_id, int case_type) {
         bottomSheetDialog = new BottomSheetDialog(context, R.style.BottomSheetTheme);
         //  Creating View for SheetMenu
         View sheetView = LayoutInflater.from(context).inflate(R.layout.adapter_sheet_menu_did_not_receive_email,
@@ -61,7 +75,26 @@ public class Warnings {
         TextView txt_main_text_sheet_did_not_receive_email = sheetView.findViewById(R.id.txt_main_text_sheet_did_not_receive_email);
         txt_main_text_sheet_did_not_receive_email.setText(msg_main);
 
-        sheetView.findViewById(R.id.btn_positive_sheet).setOnClickListener(v -> bottomSheetDialog.dismiss());
+        sheetView.findViewById(R.id.btn_positive_sheet).setOnClickListener(v -> {
+            loadingDialog = new LoadingDialog(context);
+            loadingDialog.startLoading();
+            ValidationServices services = retrofitUser.create(ValidationServices.class);
+            DtoAccount account = new DtoAccount();
+            account.setAccount_id_cry(EncryptHelper.encrypt(account_id));
+            Call<DtoAccount> call = services.resend_validate_email(account);
+            call.enqueue(new Callback<DtoAccount>() {
+                @Override
+                public void onResponse(@NotNull Call<DtoAccount> call, @NotNull Response<DtoAccount> response) {
+                    loadingDialog.dismissDialog();
+                    bottomSheetDialog.dismiss();
+                }
+                @Override
+                public void onFailure(@NotNull Call<DtoAccount> call, @NotNull Throwable t) {
+                    loadingDialog.dismissDialog();
+                    Warnings.showWeHaveAProblem(context);
+                }
+            });
+        });
 
         bottomSheetDialog.setContentView(sheetView);
         bottomSheetDialog.show();
@@ -82,7 +115,7 @@ public class Warnings {
 
         sheetView.findViewById(R.id.btn_positive_sheet).setOnClickListener(v -> {
             Intent goTo_intro = new Intent(context, SignInActivity.class);
-            ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(context, R.anim.move_to_right, R.anim.move_to_right);
+            ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(context, R.anim.move_to_right_go, R.anim.move_to_right_go);
             ActivityCompat.startActivity(context, goTo_intro, activityOptionsCompat.toBundle());
             ((Activity) context).finish();
             bottomSheetDialog.dismiss();

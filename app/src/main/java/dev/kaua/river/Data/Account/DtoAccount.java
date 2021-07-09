@@ -6,13 +6,21 @@ public class DtoAccount {
     private String name_user, username, email, phone_user, password, verify_id;
     private String banner_user, profile_image, bio_user, url_user, following, followers, born_date, joined_date;
     private String message;
-    private String login_method;
+    private String login_method, token;
 
     public DtoAccount (){}
 
     public DtoAccount(String login_method, String password) {
         this.login_method = login_method;
         this.password = password;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getLogin_method() {

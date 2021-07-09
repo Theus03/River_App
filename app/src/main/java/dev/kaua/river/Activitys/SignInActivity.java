@@ -96,7 +96,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private void goTo_intro() {
         Intent goTo_intro = new Intent(this, IntroActivity.class);
-        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(), R.anim.move_to_right, R.anim.move_to_right);
+        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(), R.anim.move_to_right_back, R.anim.move_to_right_go);
         ActivityCompat.startActivity(this, goTo_intro, activityOptionsCompat.toBundle());
         finish();
     }

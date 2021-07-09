@@ -6,4 +6,50 @@
     android:layout_height="match_parent"
     tools:context=".Activitys.SplashActivity">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/progressBarDialog"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading_animation"
+        app:lottie_speed="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Container Name -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Text App Name -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/river_corporation"
+            android:textSize="25sp"
+            android:textAllCaps="true"
+            android:textColor="#1A000000"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <!-- Text App Version -->
+        <TextView
+            android:id="@+id/app_version_splash"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="29sp"
+            android:textAllCaps="true"
+            android:textColor="#05000000"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

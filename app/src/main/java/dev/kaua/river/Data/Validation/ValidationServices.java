@@ -9,4 +9,7 @@ public interface ValidationServices {
 
     @POST("/validation/email")
     Call<DtoAccount> validate_email (@Body DtoAccount account);
+
+    @POST("/validation/resend-email")
+    Call<DtoAccount> resend_validate_email (@Body DtoAccount account);
 }

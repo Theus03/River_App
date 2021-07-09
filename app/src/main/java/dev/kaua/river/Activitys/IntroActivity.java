@@ -28,7 +28,7 @@ public class IntroActivity extends AppCompatActivity {
             btn_create_account.setCardBackgroundColor(getColor(R.color.base_color_click));
             timer.postDelayed(() -> btn_create_account.setCardBackgroundColor(getColor(R.color.base_color)),300);
             Intent goTo_SignUp = new Intent(this, SignUpActivity.class);
-            ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left, R.anim.move_to_right);
+            ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left_go, R.anim.move_to_right_go);
             ActivityCompat.startActivity(this, goTo_SignUp, activityOptionsCompat.toBundle());
             finish();
         });
@@ -36,7 +36,7 @@ public class IntroActivity extends AppCompatActivity {
         //  Set Login btn click
         txt_login.setOnClickListener(v -> {
             Intent goTo_SignIn = new Intent(this, SignInActivity.class);
-            ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left, R.anim.move_to_right);
+            ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left_go, R.anim.move_to_right_go);
             ActivityCompat.startActivity(this, goTo_SignIn, activityOptionsCompat.toBundle());
             finish();
         });
