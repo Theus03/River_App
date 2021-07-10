@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
@@ -14,6 +15,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import dev.kaua.river.Activitys.MainActivity;
 import dev.kaua.river.Activitys.SignInActivity;
@@ -75,6 +78,7 @@ public abstract class Login {
                     editor.putString("pref_born_date", response.body().getBorn_date());
                     editor.putString("pref_joined_date", response.body().getJoined_date());
                     editor.putString("pref_token", response.body().getToken());
+                    editor.putString("pref_verification_level", response.body().getVerification_level());
                     editor.apply();
 
                     //  Log in User On Firebase
@@ -82,7 +86,7 @@ public abstract class Login {
                     FirebaseUser currentUser = mAuth.getCurrentUser();
                     if(currentUser != null) mAuth.signOut();
 
-                    mAuth.signInWithEmailAndPassword(EncryptHelper.decrypt(response.body().getEmail()), EncryptHelper.decrypt(response.body().getToken()))
+                    mAuth.signInWithEmailAndPassword(Objects.requireNonNull(EncryptHelper.decrypt(response.body().getEmail())), Objects.requireNonNull(EncryptHelper.decrypt(response.body().getToken())))
                             .addOnCompleteListener(task -> Log.d("Auth", "Login Ok"));
 
                     //  Go To main
@@ -120,6 +124,10 @@ public abstract class Login {
             }
         });
 
+    }
+
+    public static void Force_LogOut(Context context){
+        Toast.makeText(context, "AAAA", Toast.LENGTH_SHORT).show();
     }
 
 }

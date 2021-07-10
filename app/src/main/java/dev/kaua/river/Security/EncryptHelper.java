@@ -49,8 +49,10 @@ public class EncryptHelper {
 
     public static String decrypt(String str) {
         try {
-            // base64(ascii) -> bytes --> decrypt -> bytes -> str(utf8)
-            return new String(decrypt(Base64.getDecoder().decode(str.getBytes("ISO-8859-1"))), "UTF-8");
+            if (str == null || str.equals("") || str.equals(" ")) return null;
+            else
+                // base64(ascii) -> bytes --> decrypt -> bytes -> str(utf8)
+                return new String(decrypt(Base64.getDecoder().decode(str.getBytes("ISO-8859-1"))), "UTF-8");
         } catch (Exception e) {
             //UnsupportedEncodingException...
             if (L.isWarnEnabled()) {

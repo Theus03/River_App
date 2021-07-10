@@ -8,6 +8,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="hint">#C1171717</color>
+    <color name="hint_line">#20171717</color>
+    <color name="third_or_plus_img">#9F000000</color>
+    <color name="custom_toast">#DF202020</color>
+    <color name="hint_default_button">#B5B5B5</color>
     <color name="white">#FFFFFFFF</color>
     <color name="BarColor">#DDDADA</color>
     <color name="base_color">#10ace0</color>

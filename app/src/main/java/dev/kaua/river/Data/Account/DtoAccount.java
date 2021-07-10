@@ -5,7 +5,7 @@ public class DtoAccount {
     private String account_id_cry, id_user_cry;
     private String name_user, username, email, phone_user, password, verify_id;
     private String banner_user, profile_image, bio_user, url_user, following, followers, born_date, joined_date;
-    private String message;
+    private String message, verification_level;
     private String login_method, token;
 
     public DtoAccount (){}
@@ -13,6 +13,14 @@ public class DtoAccount {
     public DtoAccount(String login_method, String password) {
         this.login_method = login_method;
         this.password = password;
+    }
+
+    public String getVerification_level() {
+        return verification_level;
+    }
+
+    public void setVerification_level(String verification_level) {
+        this.verification_level = verification_level;
     }
 
     public String getToken() {

@@ -46,4 +46,7 @@
     <string name="forgot_your_password">Esqueceu sua senha?</string>
     <string name="login_or_password_invalid">Login ou senha inválidos.</string>
     <string name="river_corporation">River Corporation</string>
+    <string name="your_story">Seu Story</string>
+    <string name="under_development">Em desenvolvimento</string>
+    <string name="share">Compartilhar</string>
 </resources>

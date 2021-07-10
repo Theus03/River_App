@@ -64,6 +64,12 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android:1.1.1-12'
 
+    //  Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
     //  LottieFiles Animations
     implementation "com.airbnb.android:lottie:3.7.0"
+
+    //  Image CircleImageView
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }

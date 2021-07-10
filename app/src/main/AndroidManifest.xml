@@ -12,7 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.River">
-
         <activity android:name=".Activitys.SignInActivity" />
         <activity android:name=".Activitys.ValidateEmailActivity" />
         <activity android:name=".Activitys.TermsAccountActivity" />

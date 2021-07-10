@@ -49,4 +49,7 @@
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="login_or_password_invalid">Login or password invalid.</string>
     <string name="river_corporation">River Corporation</string>
+    <string name="your_story">Your Story</string>
+    <string name="under_development">Under Development</string>
+    <string name="share">Share</string>
 </resources>
