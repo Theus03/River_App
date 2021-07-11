@@ -1,4 +1,4 @@
-package dev.kaua.river;
+package dev.kaua.river.Tools;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -8,6 +8,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 
 import com.airbnb.lottie.LottieAnimationView;
+
+import dev.kaua.river.R;
 
 public class LoadingDialog {
 

@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 
-import dev.kaua.river.LoadingDialog;
+import dev.kaua.river.Tools.LoadingDialog;
 import dev.kaua.river.R;
 
 public class TermsAccountActivity extends AppCompatActivity {

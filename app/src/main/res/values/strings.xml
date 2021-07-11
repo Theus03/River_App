@@ -52,4 +52,9 @@
     <string name="your_story">Your Story</string>
     <string name="under_development">Under Development</string>
     <string name="share">Share</string>
+    <string name="search_with_dots">Search…</string>
+    <string name="following">Following</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="followers">Followers</string>
+    <string name="follow">Follow</string>
 </resources>

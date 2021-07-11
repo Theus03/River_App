@@ -11,4 +11,7 @@ public interface AccountServices {
 
     @POST("user/login")
     Call<DtoAccount> login (@Body DtoAccount account);
+
+    @POST("user/action/get-followers-following")
+    Call<DtoAccount> get_followers_following (@Body DtoAccount account);
 }

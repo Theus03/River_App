@@ -15,12 +15,12 @@ import org.jetbrains.annotations.NotNull;
 
 import dev.kaua.river.Data.Account.DtoAccount;
 import dev.kaua.river.Data.Validation.ValidationServices;
-import dev.kaua.river.Methods;
+import dev.kaua.river.Tools.Methods;
 import dev.kaua.river.Security.EncryptHelper;
-import dev.kaua.river.LoadingDialog;
+import dev.kaua.river.Tools.LoadingDialog;
 import dev.kaua.river.R;
 import dev.kaua.river.Security.Login;
-import dev.kaua.river.Warnings;
+import dev.kaua.river.Tools.Warnings;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

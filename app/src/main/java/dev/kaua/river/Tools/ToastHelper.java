@@ -1,4 +1,4 @@
-package dev.kaua.river;
+package dev.kaua.river.Tools;
 
 import android.app.Activity;
 import android.view.Gravity;
@@ -8,6 +8,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+
+import dev.kaua.river.R;
 
 /**
  *  Copyright (c) 2021 Kauã Vitório

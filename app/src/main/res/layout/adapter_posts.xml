@@ -30,7 +30,7 @@
                 android:id="@+id/icon_user_profile_post"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:src="@drawable/ic_profile_default"
+                android:src="@drawable/ic_loading"
                 app:civ_border_color="@color/base_color"
                 app:civ_border_width="1dp"/>
 
@@ -66,7 +66,7 @@
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="2dp"
-                    android:src="@drawable/ic_verified_accoun"
+                    android:src="@drawable/ic_verified_account"
                     tools:ignore="ContentDescription" />
 
                 <!-- User Username -->
@@ -112,7 +112,7 @@
                         android:layout_height="match_parent"
                         android:adjustViewBounds="true"
                         android:maxHeight="200dp"
-                        android:src="@drawable/ic_search_select"
+                        android:src="@drawable/ic_loading"
                         tools:ignore="ContentDescription" />
 
 

@@ -1,5 +1,7 @@
-package dev.kaua.river;
+package dev.kaua.river.Tools;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -7,17 +9,27 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 import android.util.Patterns;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Random;
 
+import dev.kaua.river.Activitys.MainActivity;
+import dev.kaua.river.Data.Account.AccountServices;
+import dev.kaua.river.Data.Account.DtoAccount;
+import dev.kaua.river.LocalDataBase.DaoAccount;
+import dev.kaua.river.Security.EncryptHelper;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public abstract class Methods {
+public abstract class Methods extends MainActivity {
 
     //  Base API URL
     private static final String BASE_URL = "https://dev-river-api.herokuapp.com/";
@@ -64,17 +76,54 @@ public abstract class Methods {
         final Paint paint = new Paint();
         final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         final RectF rectF = new RectF(rect);
-        final float roundPx = pixels;
 
         paint.setAntiAlias(true);
         canvas.drawARGB(0, 0, 0, 0);
         paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawRoundRect(rectF, (float) pixels, (float) pixels, paint);
 
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
 
         return output;
+    }
+
+    public static void LoadFollowersAndFollowing(Context context){
+        final Retrofit retrofitUser = GetRetrofitBuilder();
+        SharedPreferences sp = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        DtoAccount account = new DtoAccount();
+        account.setAccount_id_cry(sp.getString("pref_account_id", null));
+        AccountServices services = retrofitUser.create(AccountServices.class);
+        Call<DtoAccount> call = services.get_followers_following(account);
+        call.enqueue(new Callback<DtoAccount>() {
+            @Override
+            public void onResponse(@NotNull Call<DtoAccount> call, @NotNull Response<DtoAccount> response) {
+                if(response.code() == 200){
+                    DtoAccount info = new DtoAccount();
+                    info.setAccount_id(Integer.parseInt(Objects.requireNonNull(EncryptHelper.decrypt(sp.getString("pref_account_id", null)))));
+                    assert response.body() != null;
+                    info.setFollowers(response.body().getFollowers());
+                    info.setFollowing(response.body().getFollowing());
+                    DaoAccount daoAccount = new DaoAccount(context);
+                    long lines = daoAccount.Register_Followers_Following(info);
+                    if(lines > 0) Log.d("LocalDataBase", "Followers and Following Update");
+                    else Log.d("LocalDataBase", "Followers and Following is NOT Update");
+                }
+            }
+            @Override
+            public void onFailure(@NotNull Call<DtoAccount> call, @NotNull Throwable t) {}
+        });
+    }
+
+    public static String NumberTrick(int number) {
+        String numberString = "";
+        if (Math.abs(number / 1000000) > 1)
+            numberString = (number / 1000000) + "m";
+        else if (Math.abs(number / 1000) > 1)
+            numberString = (number / 1000) + "k";
+        else
+            numberString = number + "";
+        return numberString;
     }
 
     // This method can be used in the future

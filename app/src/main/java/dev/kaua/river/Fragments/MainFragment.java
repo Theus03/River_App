@@ -1,5 +1,6 @@
 package dev.kaua.river.Fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,18 +14,15 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.squareup.picasso.Picasso;
-
-import org.jetbrains.annotations.NotNull;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import dev.kaua.river.Activitys.MainActivity;
 import dev.kaua.river.Data.Account.DtoAccount;
 import dev.kaua.river.Data.Post.Actions.RecommendedPosts;
 import dev.kaua.river.R;
-import dev.kaua.river.ToastHelper;
+import dev.kaua.river.Tools.ToastHelper;
 
 /**
  *  Copyright (c) 2021 Kauã Vitório
@@ -56,6 +54,7 @@ public class MainFragment extends Fragment {
         //swipe_main.setOnRefreshListener(MainFragment::RefreshRecycler);
 
         RefreshRecycler();
+        RefreshRecycler();
         return view;
     }
 
@@ -66,7 +65,6 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MainActivity.getInstance().Check_Fragments();
     }
 
 

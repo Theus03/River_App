@@ -23,7 +23,7 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import dev.kaua.river.Data.Post.DtoPost;
-import dev.kaua.river.Methods;
+import dev.kaua.river.Tools.Methods;
 import dev.kaua.river.R;
 import dev.kaua.river.Security.EncryptHelper;
 
@@ -50,7 +50,7 @@ public class Posts_Adapters extends RecyclerView.Adapter<Posts_Adapters.MyHolder
         if(Integer.parseInt(Objects.requireNonNull(EncryptHelper.decrypt(list.get(position).getVerification_level()))) != 0){
             holder.ic_account_badge.setVisibility(View.VISIBLE);
             if (Integer.parseInt(Objects.requireNonNull(EncryptHelper.decrypt(list.get(position).getVerification_level()))) == 1)
-                holder.ic_account_badge.setImageDrawable(context.getDrawable(R.drawable.ic_verified_accoun));
+                holder.ic_account_badge.setImageDrawable(context.getDrawable(R.drawable.ic_verified_account));
 
         }else holder.ic_account_badge.setVisibility(View.GONE);
         holder.img_secondImage_post.setVisibility(View.GONE);
@@ -60,8 +60,8 @@ public class Posts_Adapters extends RecyclerView.Adapter<Posts_Adapters.MyHolder
         holder.txt_username_post.setText( "@" + EncryptHelper.decrypt(list.get(position).getUsername()));
         holder.txt_post_content.setText(EncryptHelper.decrypt(list.get(position).getPost_content()));
 
-        holder.txt_likes_post.setText(NumberTrick(Integer.parseInt(Objects.requireNonNull(EncryptHelper.decrypt(list.get(position).getPost_likes())))));
-        holder.txt_comments_post.setText(NumberTrick(Integer.parseInt(Objects.requireNonNull(EncryptHelper.decrypt(list.get(position).getPost_comments_amount())))));
+        holder.txt_likes_post.setText(Methods.NumberTrick(Integer.parseInt(Objects.requireNonNull(EncryptHelper.decrypt(list.get(position).getPost_likes())))));
+        holder.txt_comments_post.setText(Methods.NumberTrick(Integer.parseInt(Objects.requireNonNull(EncryptHelper.decrypt(list.get(position).getPost_comments_amount())))));
 
 
         if(list.get(position).getPost_images() != null && list.get(position).getPost_images().size() > 0){
@@ -105,17 +105,6 @@ public class Posts_Adapters extends RecyclerView.Adapter<Posts_Adapters.MyHolder
                 }
             }
         }else holder.img_firstImage_post.setVisibility(View.GONE);
-    }
-
-    private String NumberTrick(int number) {
-        String numberString = "";
-        if (Math.abs(number / 1000000) > 1)
-            numberString = (number / 1000000) + "m";
-        else if (Math.abs(number / 1000) > 1)
-            numberString = (number / 1000) + "k";
-        else
-            numberString = number + "";
-        return numberString;
     }
 
     @Override

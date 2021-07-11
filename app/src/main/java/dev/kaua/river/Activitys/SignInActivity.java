@@ -17,7 +17,7 @@ import java.util.Objects;
 
 import dev.kaua.river.R;
 import dev.kaua.river.Security.Login;
-import dev.kaua.river.Warnings;
+import dev.kaua.river.Tools.Warnings;
 
 public class SignInActivity extends AppCompatActivity {
     private static SignInActivity instance;

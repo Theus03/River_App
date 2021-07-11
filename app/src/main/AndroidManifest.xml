@@ -12,6 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.River">
+        <activity android:name=".Activitys.ChatActivity"/>
+        <activity android:name=".Activitys.CommonLayoutActivity" />
         <activity android:name=".Activitys.SignInActivity" />
         <activity android:name=".Activitys.ValidateEmailActivity" />
         <activity android:name=".Activitys.TermsAccountActivity" />
@@ -24,7 +26,7 @@
         </activity>
         <activity android:name=".Activitys.IntroActivity" />
         <activity android:name=".Activitys.SignUpActivity" />
-        <activity android:name=".Activitys.MainActivity" />
+        <activity android:name=".Activitys.MainActivity"/>
     </application>
 
 </manifest>

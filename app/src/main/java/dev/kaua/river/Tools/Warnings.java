@@ -1,4 +1,4 @@
-package dev.kaua.river;
+package dev.kaua.river.Tools;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import dev.kaua.river.Activitys.SignInActivity;
 import dev.kaua.river.Data.Account.DtoAccount;
 import dev.kaua.river.Data.Validation.ValidationServices;
+import dev.kaua.river.R;
 import dev.kaua.river.Security.EncryptHelper;
 import retrofit2.Call;
 import retrofit2.Callback;

@@ -7,14 +7,16 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
 import dev.kaua.river.Adapters.Posts_Adapters;
 import dev.kaua.river.Data.Post.DtoPost;
 import dev.kaua.river.Data.Post.PostServices;
-import dev.kaua.river.Methods;
-import dev.kaua.river.ToastHelper;
+import dev.kaua.river.Tools.Methods;
+import dev.kaua.river.Tools.ToastHelper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,10 +39,10 @@ public class RecommendedPosts {
         recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         call.enqueue(new Callback<ArrayList<DtoPost>>() {
             @Override
-            public void onResponse(Call<ArrayList<DtoPost>> call, Response<ArrayList<DtoPost>> response) {
+            public void onResponse(@NotNull Call<ArrayList<DtoPost>> call, @NotNull Response<ArrayList<DtoPost>> response) {
                 //swipe_main.setRefreshing(false);
                 ArrayList<DtoPost> list = response.body();
-                for (int i = 0; i < list.get(0).getPosts().size(); i++){
+                for (int i = 0; i < Objects.requireNonNull(list).get(0).getPosts().size(); i++){
                     DtoPost.Posts_Search dtoPost = list.get(0).getPosts().get(i);
                     DtoPost post = new DtoPost();
                     post.setName_user(dtoPost.getName_user());
@@ -56,13 +58,13 @@ public class RecommendedPosts {
 
                 Posts_Adapters posts_adapters = new Posts_Adapters(arraylist, context);
                 posts_adapters.notifyDataSetChanged();
-                recyclerView.setAdapter((RecyclerView.Adapter) posts_adapters);
+                recyclerView.setAdapter(posts_adapters);
                 recyclerView.getRecycledViewPool().clear();
                 recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
             }
 
             @Override
-            public void onFailure(Call<ArrayList<DtoPost>> call, Throwable t) {
+            public void onFailure(@NotNull Call<ArrayList<DtoPost>> call, @NotNull Throwable t) {
                 ToastHelper.toast(((Activity)context), "" + t.getMessage(), 0);
 
             }

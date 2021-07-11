@@ -24,10 +24,10 @@ import dev.kaua.river.Activitys.ValidateEmailActivity;
 import dev.kaua.river.Data.Account.AccountServices;
 import dev.kaua.river.Data.Account.DtoAccount;
 import dev.kaua.river.Firebase.ConfFirebase;
-import dev.kaua.river.LoadingDialog;
-import dev.kaua.river.Methods;
+import dev.kaua.river.Tools.LoadingDialog;
+import dev.kaua.river.Tools.Methods;
 import dev.kaua.river.R;
-import dev.kaua.river.Warnings;
+import dev.kaua.river.Tools.Warnings;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -80,6 +80,9 @@ public abstract class Login {
                     editor.putString("pref_token", response.body().getToken());
                     editor.putString("pref_verification_level", response.body().getVerification_level());
                     editor.apply();
+
+                    //  Getting Followers and Followings
+                    Methods.LoadFollowersAndFollowing(context);
 
                     //  Log in User On Firebase
                     mAuth = ConfFirebase.getFirebaseAuth();

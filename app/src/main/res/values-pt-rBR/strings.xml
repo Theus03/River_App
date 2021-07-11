@@ -49,4 +49,9 @@
     <string name="your_story">Seu Story</string>
     <string name="under_development">Em desenvolvimento</string>
     <string name="share">Compartilhar</string>
+    <string name="search_with_dots">Pesquisar…</string>
+    <string name="following">Seguindo</string>
+    <string name="edit_profile">Editar Perfil</string>
+    <string name="followers">Seguidores</string>
+    <string name="follow">Seguir</string>
 </resources>

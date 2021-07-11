@@ -6,13 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".Activitys.MainActivity">
 
-    <!-- Main FrameLayout -->
-    <FrameLayout
-        android:id="@+id/frameLayoutMain"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpager_main"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/container_bottom_main"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <!-- Bottom Menu -->
     <androidx.constraintlayout.widget.ConstraintLayout
