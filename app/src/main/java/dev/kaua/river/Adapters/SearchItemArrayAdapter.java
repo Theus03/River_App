@@ -72,9 +72,8 @@ public class SearchItemArrayAdapter extends ArrayAdapter<DtoAccount> {
             if (constraint != null) {
                 suggestions.clear();
                 for (DtoAccount people : tempItems) {
-                    if (people.getName_user().toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        suggestions.add(people);
-                    }
+                    if (people.getName_user().toLowerCase().contains(constraint.toString().toLowerCase())) suggestions.add(people);
+                    else if (people.getUsername().toLowerCase().contains(constraint.toString().toLowerCase())) suggestions.add(people);
                 }
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = suggestions;

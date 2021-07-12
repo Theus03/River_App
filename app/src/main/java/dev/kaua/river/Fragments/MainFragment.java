@@ -1,12 +1,14 @@
 package dev.kaua.river.Fragments;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +33,7 @@ import dev.kaua.river.Tools.ToastHelper;
  *  @author Kaua Vitorio
  **/
 
+@SuppressLint("StaticFieldLeak")
 public class MainFragment extends Fragment {
     //private static SwipeRefreshLayout swipe_main;
     private ConstraintLayout btn_create_new_story_main;
@@ -38,6 +41,9 @@ public class MainFragment extends Fragment {
     private CircleImageView icon_ProfileUser_main;
     private LinearLayout header_main;
     private static Context instance;
+    private static RelativeLayout loadingPanel;
+    private Handler timer = new Handler();
+
 
     private View view;
     private DtoAccount account;
@@ -52,9 +58,9 @@ public class MainFragment extends Fragment {
         btn_create_new_story_main.setOnClickListener(v -> StoryClick());
 
         //swipe_main.setOnRefreshListener(MainFragment::RefreshRecycler);
+        RefreshRecycler();
+        timer.postDelayed(MainFragment::RefreshRecycler,1000);
 
-        RefreshRecycler();
-        RefreshRecycler();
         return view;
     }
 
@@ -62,17 +68,13 @@ public class MainFragment extends Fragment {
         ToastHelper.toast(requireActivity(), getString(R.string.under_development), 0);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 
-
-    public static void RefreshRecycler(){ RecommendedPosts.getRecommendedPosts(instance, recyclerView_Posts/*, swipe_main*/); }
+    public static void RefreshRecycler(){ RecommendedPosts.getRecommendedPosts(instance, recyclerView_Posts, loadingPanel); }
 
     private void Ids(View view) {
         instance = requireActivity();
         account = MainActivity.getInstance().getUserInformation();
+        loadingPanel = view.findViewById(R.id.loadingPanel);
         icon_ProfileUser_main = view.findViewById(R.id.icon_ProfileUser_main);
         btn_create_new_story_main = view.findViewById(R.id.btn_create_new_story_main);
         recyclerView_Posts = view.findViewById(R.id.recyclerView_Posts);

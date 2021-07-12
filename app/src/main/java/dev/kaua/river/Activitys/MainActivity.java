@@ -1,6 +1,5 @@
 package dev.kaua.river.Activitys;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
@@ -14,13 +13,11 @@ import android.widget.LinearLayout;
 
 import com.squareup.picasso.Picasso;
 
-import org.jetbrains.annotations.NotNull;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import dev.kaua.river.Data.Account.DtoAccount;
 import dev.kaua.river.Fragments.FragmentPageAdapter;
 import dev.kaua.river.Fragments.MainFragment;
-import dev.kaua.river.Fragments.SearchFragment;
 import dev.kaua.river.Security.EncryptHelper;
 import dev.kaua.river.R;
 import dev.kaua.river.Security.Login;
@@ -33,6 +30,7 @@ import dev.kaua.river.Tools.Methods;
  *  @author Kaua Vitorio
  **/
 
+@SuppressWarnings("FieldCanBeLocal")
 @SuppressLint({"StaticFieldLeak", "UseCompatLoadingForDrawables"})
 public class MainActivity extends AppCompatActivity {
     private static ImageView btn_search_main, btn_home_main;
@@ -71,8 +69,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(1, true);
 
-        account.setProfile_image("https://avatars.githubusercontent.com/u/64799699?v=4");
-        //LoadMainFragment();
 
 
         //  Get all SharedPreferences
@@ -105,34 +101,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        viewPager.setPageTransformer(false, new ViewPager.PageTransformer() {
-            @Override
-            public void transformPage(@NonNull @NotNull View page, float position) {
-                page.setTranslationX(-position * page.getWidth());
+        viewPager.setPageTransformer(false, (page, position) -> {
+            page.setTranslationX(-position * page.getWidth());
 
-                if (Math.abs(position) <= 0.5) {
-                    page.setVisibility(View.VISIBLE);
-                    page.setScaleX(1 - Math.abs(position));
-                    page.setScaleY(1 - Math.abs(position));
-                } else if (Math.abs(position) > 0.5)
-                    page.setVisibility(View.GONE);
+            if (Math.abs(position) <= 0.5) {
+                page.setVisibility(View.VISIBLE);
+                page.setScaleX(1 - Math.abs(position));
+                page.setScaleY(1 - Math.abs(position));
+            } else if (Math.abs(position) > 0.5)
+                page.setVisibility(View.GONE);
 
 
-                if (position < -1) // [-Infinity,-1)
-                    // This page is way off-screen to the left.
-                    page.setAlpha(0);
-                else if (position <= 0) {   // [-1,0]
-                    page.setAlpha(1);
-                    page.setRotation(360 * Math.abs(position));
-                }
-                else if (position <= 1) {   // (0,1]
-                    page.setAlpha(1);
-                    page.setRotation(-360 * Math.abs(position));
-                }
-                else // (1,+Infinity]
-                    // This page is way off-screen to the right.
-                    page.setAlpha(0);
+            if (position < -1) // [-Infinity,-1)
+                // This page is way off-screen to the left.
+                page.setAlpha(0);
+            else if (position <= 0) {   // [-1,0]
+                page.setAlpha(1);
+                page.setRotation(360 * Math.abs(position));
             }
+            else if (position <= 1) {   // (0,1]
+                page.setAlpha(1);
+                page.setRotation(-360 * Math.abs(position));
+            }
+            else // (1,+Infinity]
+                // This page is way off-screen to the right.
+                page.setAlpha(0);
         });
     }
 
@@ -163,7 +156,8 @@ public class MainActivity extends AppCompatActivity {
         account.setEmail(EncryptHelper.decrypt(sp.getString("pref_email", null)));
         account.setPhone_user(EncryptHelper.decrypt(sp.getString("pref_phone_user", null)));
         account.setBanner_user(EncryptHelper.decrypt(sp.getString("pref_banner_user", null)));
-        account.setPhone_user(EncryptHelper.decrypt(sp.getString("pref_profile_image", null)));
+        account.setPhone_user(EncryptHelper.decrypt(sp.getString("pref_phone_user", null)));
+        account.setProfile_image(EncryptHelper.decrypt(sp.getString("pref_profile_image", null)));
         account.setBio_user(EncryptHelper.decrypt(sp.getString("pref_bio_user", null)));
         account.setUrl_user(EncryptHelper.decrypt(sp.getString("pref_url_user", null)));
         account.setFollowing(EncryptHelper.decrypt(sp.getString("pref_following", null)));

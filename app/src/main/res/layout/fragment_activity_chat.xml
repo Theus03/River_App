@@ -5,20 +5,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Edit Search -->
-    <AutoCompleteTextView
-        android:id="@+id/edit_Search_Main"
-        android:layout_width="300dp"
-        android:layout_height="51dp"
-        android:background="@drawable/bg_edittext_search_main"
-        android:hint="@string/search_with_dots"
-        android:imeOptions="actionSearch"
-        android:inputType="text"
-        android:scrollbarSize="4dp"
-        android:scrollbarThumbVertical="@drawable/custom_scroll_style_vertical"
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CHAT"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="Autofill" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

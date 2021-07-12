@@ -6,21 +6,56 @@ public class DtoAccount {
     private String name_user, username, email, phone_user, password, verify_id;
     private String banner_user, profile_image, bio_user, url_user, following, followers, born_date, joined_date;
     private String message, verification_level;
-    private String login_method, token;
+    private String login_method, token, login_info, trust, date_time_login, UID;
 
     public DtoAccount (){}
 
-    public DtoAccount(String login_method, String password) {
+    public DtoAccount(String login_method, String password, String device_login, String trust, String date_time_login) {
         this.login_method = login_method;
         this.password = password;
+        this.login_info = device_login;
+        this.trust = trust;
+        this.date_time_login = date_time_login;
     }
 
     public String getVerification_level() {
         return verification_level;
     }
 
+    public String getDate_time_login() {
+        return date_time_login;
+    }
+
+    public String getUID() {
+        return UID;
+    }
+
+    public void setUID(String UID) {
+        this.UID = UID;
+    }
+
+    public void setDate_time_login(String date_time_login) {
+        this.date_time_login = date_time_login;
+    }
+
     public void setVerification_level(String verification_level) {
         this.verification_level = verification_level;
+    }
+
+    public String getLogin_info() {
+        return login_info;
+    }
+
+    public void setLogin_info(String login_info) {
+        this.login_info = login_info;
+    }
+
+    public String getTrust() {
+        return trust;
+    }
+
+    public void setTrust(String trust) {
+        this.trust = trust;
     }
 
     public String getToken() {

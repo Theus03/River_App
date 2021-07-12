@@ -1,6 +1,8 @@
 package dev.kaua.river.Tools;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -9,8 +11,17 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.net.ConnectivityManager;
+import android.net.Uri;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.View;
+import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -124,6 +135,47 @@ public abstract class Methods extends MainActivity {
         else
             numberString = number + "";
         return numberString;
+    }
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return manager.getActiveNetworkInfo() != null &&
+                manager.getActiveNetworkInfo().isConnectedOrConnecting();
+    }
+
+    protected static void makeLinkClickable(Context context, SpannableStringBuilder strBuilder, final URLSpan span)
+    {
+        int start = strBuilder.getSpanStart(span);
+        int end = strBuilder.getSpanEnd(span);
+        int flags = strBuilder.getSpanFlags(span);
+        ClickableSpan clickable = new ClickableSpan() {
+            public void onClick(View view) {
+                browseTo(context, span.getURL());
+                // Do something with span.getURL() to handle the link click...
+            }
+        };
+        strBuilder.setSpan(clickable, start, end, flags);
+        strBuilder.removeSpan(span);
+    }
+
+    public static void setTextViewHTML(Context context, TextView text, String html)
+    {
+        CharSequence sequence = Html.fromHtml(html);
+        SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
+        URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
+        for(URLSpan span : urls) {
+            makeLinkClickable(context, strBuilder, span);
+        }
+        text.setText(strBuilder);
+        text.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    public static void browseTo(Context context, String url){
+
+        if (!url.startsWith("http://") && !url.startsWith("https://")) url = "http://" + url;
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        context.startActivity(i);
     }
 
     // This method can be used in the future

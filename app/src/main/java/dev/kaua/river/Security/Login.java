@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,6 +17,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Objects;
 
 import dev.kaua.river.Activitys.MainActivity;
@@ -49,7 +52,17 @@ public abstract class Login {
     public static void DoLogin(Context context, String login_method, String password){
         loadingDialog = new LoadingDialog((Activity) context);
         loadingDialog.startLoading();
-        DtoAccount account = new DtoAccount(EncryptHelper.encrypt(login_method), EncryptHelper.encrypt(password));
+        String device_login = Build.MANUFACTURER + ", " + Build.MODEL;
+        Calendar c = Calendar.getInstance();
+        Log.d("DateTime", "Current time => "+c.getTime());
+
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("MMMM dd");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat df_time = new SimpleDateFormat("HH:mm a z");
+        String formattedDate = df.format(c.getTime()) + " at " + df_time.format(c.getTime());
+        Log.d("DateTime", "Current date => "+ formattedDate);
+
+        DtoAccount account = new DtoAccount(EncryptHelper.encrypt(login_method), EncryptHelper.encrypt(password),
+                EncryptHelper.encrypt(device_login.substring(0,1).toUpperCase().concat(device_login.substring(1))), EncryptHelper.encrypt("0-river-reliable"), EncryptHelper.encrypt(formattedDate));
         AccountServices login_service = retrofitUser.create(AccountServices.class);
         Call<DtoAccount> call = login_service.login(account);
         call.enqueue(new Callback<DtoAccount>() {
@@ -65,6 +78,7 @@ public abstract class Login {
                     SharedPreferences.Editor editor = mPrefs.edit();
                     assert response.body() != null;
                     editor.putString("pref_account_id", response.body().getAccount_id_cry());
+                    editor.putString("pref_uid", response.body().getUID());
                     editor.putString("pref_name_user", response.body().getName_user());
                     editor.putString("pref_username", response.body().getUsername());
                     editor.putString("pref_email", response.body().getEmail());
@@ -78,6 +92,7 @@ public abstract class Login {
                     editor.putString("pref_born_date", response.body().getBorn_date());
                     editor.putString("pref_joined_date", response.body().getJoined_date());
                     editor.putString("pref_token", response.body().getToken());
+                    editor.putString("pref_password", EncryptHelper.encrypt(password));
                     editor.putString("pref_verification_level", response.body().getVerification_level());
                     editor.apply();
 

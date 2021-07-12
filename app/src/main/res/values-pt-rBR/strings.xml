@@ -54,4 +54,5 @@
     <string name="edit_profile">Editar Perfil</string>
     <string name="followers">Seguidores</string>
     <string name="follow">Seguir</string>
+    <string name="you_are_without_internet">Voce esta sem conexão a internet</string>
 </resources>

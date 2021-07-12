@@ -15,6 +15,8 @@ public class DtoPost {
         return posts;
     }
 
+    private String post_id;
+
     private String account_id;
 
     private String name_user;
@@ -53,6 +55,14 @@ public class DtoPost {
 
     public void setName_user(String name_user) {
         this.name_user = name_user;
+    }
+
+    public String getPost_id() {
+        return post_id;
+    }
+
+    public void setPost_id(String post_id) {
+        this.post_id = post_id;
     }
 
     public String getAccount_id() {
@@ -139,6 +149,10 @@ public class DtoPost {
 
     public class Posts_Search {
 
+        @SerializedName("post_id")
+        @Expose
+        private String post_id;
+
         @SerializedName("account_id")
         @Expose
         private String account_id;
@@ -193,6 +207,14 @@ public class DtoPost {
 
         public void setVerification_level(String verification_level) {
             this.verification_level = verification_level;
+        }
+
+        public String getPost_id() {
+            return post_id;
+        }
+
+        public void setPost_id(String post_id) {
+            this.post_id = post_id;
         }
 
         public String getName_user() {

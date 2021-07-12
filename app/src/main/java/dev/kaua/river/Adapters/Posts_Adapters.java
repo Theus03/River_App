@@ -1,9 +1,16 @@
 package dev.kaua.river.Adapters;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +33,7 @@ import dev.kaua.river.Data.Post.DtoPost;
 import dev.kaua.river.Tools.Methods;
 import dev.kaua.river.R;
 import dev.kaua.river.Security.EncryptHelper;
+import dev.kaua.river.Tools.ToastHelper;
 
 public class Posts_Adapters extends RecyclerView.Adapter<Posts_Adapters.MyHolderPosts> {
     ArrayList<DtoPost> list;
@@ -47,24 +55,23 @@ public class Posts_Adapters extends RecyclerView.Adapter<Posts_Adapters.MyHolder
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     @Override
     public void onBindViewHolder(@NonNull MyHolderPosts holder, int position) {
-        if(Integer.parseInt(Objects.requireNonNull(EncryptHelper.decrypt(list.get(position).getVerification_level()))) != 0){
+        if(Integer.parseInt(Objects.requireNonNull(list.get(position).getVerification_level())) != 0){
             holder.ic_account_badge.setVisibility(View.VISIBLE);
-            if (Integer.parseInt(Objects.requireNonNull(EncryptHelper.decrypt(list.get(position).getVerification_level()))) == 1)
+            if (Integer.parseInt(Objects.requireNonNull(list.get(position).getVerification_level())) == 1)
                 holder.ic_account_badge.setImageDrawable(context.getDrawable(R.drawable.ic_verified_account));
 
         }else holder.ic_account_badge.setVisibility(View.GONE);
         holder.img_secondImage_post.setVisibility(View.GONE);
         holder.container_third_img.setVisibility(View.GONE);
-        Picasso.get().load(EncryptHelper.decrypt(list.get(position).getProfile_image())).into(holder.icon_user_profile_post);
-        holder.txt_name_user_post.setText(EncryptHelper.decrypt(list.get(position).getName_user()));
-        holder.txt_username_post.setText( "@" + EncryptHelper.decrypt(list.get(position).getUsername()));
-        holder.txt_post_content.setText(EncryptHelper.decrypt(list.get(position).getPost_content()));
+        Picasso.get().load(list.get(position).getProfile_image()).into(holder.icon_user_profile_post);
+        holder.txt_name_user_post.setText(list.get(position).getName_user());
+        holder.txt_username_post.setText( "@" + list.get(position).getUsername());
+        Methods.setTextViewHTML(context, holder.txt_post_content, list.get(position).getPost_content());
 
-        holder.txt_likes_post.setText(Methods.NumberTrick(Integer.parseInt(Objects.requireNonNull(EncryptHelper.decrypt(list.get(position).getPost_likes())))));
-        holder.txt_comments_post.setText(Methods.NumberTrick(Integer.parseInt(Objects.requireNonNull(EncryptHelper.decrypt(list.get(position).getPost_comments_amount())))));
+        holder.txt_likes_post.setText(Methods.NumberTrick(Integer.parseInt(list.get(position).getPost_likes())));
+        holder.txt_comments_post.setText(Methods.NumberTrick(Integer.parseInt(list.get(position).getPost_comments_amount())));
 
-
-        if(list.get(position).getPost_images() != null && list.get(position).getPost_images().size() > 0){
+        if(list.get(position).getPost_images() != null && list.get(position).getPost_images().size() > 0 && !list.get(position).getPost_images().get(0).equals("NaN")){
             int ImagesAmount = list.get(position).getPost_images().size();
             if(ImagesAmount < 2){
                 for (int i = 0; i < 1; i++){

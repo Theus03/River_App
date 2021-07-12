@@ -7,6 +7,8 @@ import androidx.core.app.ActivityOptionsCompat;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -58,6 +60,8 @@ public class SignUpActivity extends AppCompatActivity {
     private LoadingDialog loadingDialog;
     @SuppressLint("StaticFieldLeak")
     private static SignUpActivity instance;
+    private static SharedPreferences mPrefs;
+    private static final String PREFS_NAME = "myPrefs";
 
     int age_user = 0;
     String name_user, email, phone;
@@ -153,6 +157,8 @@ public class SignUpActivity extends AppCompatActivity {
             account.setPassword(EncryptHelper.encrypt(edit_password.getText().toString()));
             account.setBorn_date(EncryptHelper.encrypt(Methods.RemoveSpace(Objects.requireNonNull(edit_bornDate.getText()).toString())));
             account.setJoined_date(EncryptHelper.encrypt(joined_date));
+            String device_login = Build.BRAND + ", " + Build.MODEL;
+            account.setLogin_info(EncryptHelper.encrypt(device_login));
             account.setBio_user(EncryptHelper.encrypt(getString(R.string.default_bio)));
 
             // Generate token to user can be logged in firebase services
@@ -180,9 +186,15 @@ public class SignUpActivity extends AppCompatActivity {
                                     loadingDialog.dismissDialog();
                                     if(response.code() == 201){
                                         //  User has been created so now go to the Email Validation
+                                        assert response.body() != null;
                                         Intent i = new Intent(SignUpActivity.this, ValidateEmailActivity.class);
                                         ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(getApplicationContext(),R.anim.move_to_left_go, R.anim.move_to_right_go);
-                                        assert response.body() != null;
+                                        mPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = mPrefs.edit();
+                                        editor.putString("pref_account_id", response.body().getAccount_id_cry());
+                                        editor.putString("pref_email", EncryptHelper.encrypt(edit_email.getText().toString()));
+                                        editor.putString("pref_password", EncryptHelper.encrypt(edit_password.getText().toString()));
+                                        editor.apply();
                                         i.putExtra("account_id", EncryptHelper.decrypt(response.body().getAccount_id_cry()));
                                         i.putExtra("email_user", edit_email.getText().toString());
                                         i.putExtra("password", edit_password.getText().toString());
